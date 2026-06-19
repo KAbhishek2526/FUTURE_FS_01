@@ -2,6 +2,24 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { premiumEase } from '@/lib/animations';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.2 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.8, ease: premiumEase } 
+  }
+};
 
 export default function About() {
   return (
@@ -29,29 +47,44 @@ export default function About() {
         {/* Text Area */}
         <motion.div 
           className="w-full md:w-1/2 flex flex-col justify-center"
-          initial={{ opacity: 0, x: 40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
         >
-          <div className="text-blue-500 font-semibold tracking-[0.2em] uppercase text-sm mb-4">About Me</div>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-8 text-white/90">
-            Developer / CS Student
-          </h2>
+          <motion.div variants={itemVariants} className="text-blue-500 font-semibold tracking-[0.2em] uppercase text-sm mb-4">About Me</motion.div>
+          <motion.h2 variants={itemVariants} className="text-4xl md:text-5xl font-bold tracking-tight mb-8 text-white/90">
+            Developer / CSBS Student
+          </motion.h2>
           
-          <div className="space-y-6 text-lg text-white/60 font-light leading-relaxed">
-            <p>
-              I am a Computer Science student and a passionate developer with a strong focus on 
-              <span className="text-white/90 font-medium"> modern web architecture </span> 
-              and <span className="text-white/90 font-medium">AI tools integration</span>.
-            </p>
-            <p>
-              My approach blends technical precision with high-end aesthetic sensibilities. 
-              I believe great software isn&apos;t just functional; it leverages clean code, 
-              robust performance fundamentals, and butter-smooth micro-interactions to deliver 
-              client-ready, premium digital products.
-            </p>
+          <div className="space-y-6 text-lg text-white/60 font-light leading-relaxed mb-10">
+            <motion.p variants={itemVariants}>
+              I am a Computer Science and Business Systems (CSBS) student, interested and enthusiastic about building modern <span className="text-blue-400 font-medium drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">tech-stack websites</span> and integrating <span className="text-blue-400 font-medium drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">AI/ML</span> models into real-world applications.
+            </motion.p>
+            <motion.p variants={itemVariants}>
+              I am currently learning AI/ML and continuously exploring new technologies as a passionate tech enthusiast. My goal is to build clean, scalable, and high-performance digital products.
+            </motion.p>
+            <motion.p variants={itemVariants}>
+              I also have experience working with simple <span className="text-blue-400 font-medium drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">backend systems</span> and API integrations, enabling me to create complete and functional web solutions.
+            </motion.p>
           </div>
+
+          <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-4">
+            <a 
+              href="mailto:kokkiligaddaabhishek2006@gmail.com"
+              className="px-6 py-3 rounded-full bg-blue-600 text-white font-medium tracking-wide hover:bg-blue-500 hover:scale-105 transition-all duration-300 shadow-[0_0_15px_rgba(37,99,235,0.4)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)]"
+            >
+              Email Me
+            </a>
+            <a 
+              href="https://www.linkedin.com/in/abhishek-k-891683326/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 rounded-full bg-white/10 text-white font-medium tracking-wide border border-white/20 hover:bg-white/20 hover:scale-105 transition-all duration-300 hover:border-blue-400/50 hover:shadow-[0_0_15px_rgba(37,99,235,0.2)]"
+            >
+              View LinkedIn
+            </a>
+          </motion.div>
         </motion.div>
 
       </div>

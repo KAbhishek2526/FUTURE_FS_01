@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { MonitorSmartphone, LayoutGrid, Bot } from 'lucide-react';
+import { premiumEase } from '@/lib/animations';
 
 const services = [
   {
@@ -46,15 +47,24 @@ export default function Services() {
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {services.map((service, idx) => (
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+          }}
+        >
+          {services.map((service) => (
             <motion.div
               key={service.title}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: idx * 0.15 }}
-              className="glass p-10 rounded-3xl group flex flex-col items-center text-center transform transition-all duration-300 hover:-translate-y-2 hover:bg-white/10 hover:border-white/20 glow-blue block"
+              variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: premiumEase } }
+              }}
+              className="glass p-10 rounded-3xl group flex flex-col items-center text-center transform duration-300 hover-glow block"
             >
               <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
                 {service.icon}
@@ -67,7 +77,7 @@ export default function Services() {
               </p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -14,6 +14,12 @@ body {
   overflow-x: hidden;
 }
 
+@media (pointer: fine) {
+  body, a, button, [role="button"], input, select, textarea {
+    cursor: none !important;
+  }
+}
+
 @layer utilities {
   .glass {
     @apply bg-white/5 backdrop-blur-md border border-white/10;
@@ -26,6 +32,20 @@ body {
   }
   .text-glow {
     text-shadow: 0 0 20px rgba(255,255,255,0.4);
+  }
+
+  .perspective-container {
+    perspective: 1000px;
+  }
+
+  .hover-glow {
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .hover-glow:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
   }
 }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 
 const FRAME_COUNT = 114;
@@ -17,50 +17,62 @@ export default function ScrollyCanvas() {
     offset: ['start start', 'end end'],
   });
 
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
   // Section 1: Intro (0% to 20%)
-  const y1 = useTransform(scrollYProgress, [0, 0.2], [0, -100]);
-  const opacity1 = useTransform(scrollYProgress, [0, 0.1, 0.2], [1, 1, 0]);
+  const y1 = useTransform(smoothProgress, [0, 0.2], [0, -100]);
+  const rotateX1 = useTransform(smoothProgress, [0, 0.1, 0.2], [0, 0, 45]);
+  const opacity1 = useTransform(smoothProgress, [0, 0.1, 0.2], [1, 1, 0]);
 
   // Section 2: Expertise (20% to 50%)
-  const y2 = useTransform(scrollYProgress, [0.2, 0.35, 0.5], [50, 0, -50]);
-  const opacity2 = useTransform(scrollYProgress, [0.2, 0.35, 0.5], [0, 1, 0]);
+  const y2 = useTransform(smoothProgress, [0.2, 0.35, 0.5], [50, 0, -50]);
+  const rotateX2 = useTransform(smoothProgress, [0.2, 0.35, 0.5], [45, 0, -45]);
+  const opacity2 = useTransform(smoothProgress, [0.2, 0.35, 0.5], [0, 1, 0]);
 
   // Section 3: Vision (50% to 80%)
-  const y3 = useTransform(scrollYProgress, [0.5, 0.65, 0.8], [50, 0, -50]);
-  const opacity3 = useTransform(scrollYProgress, [0.5, 0.65, 0.8], [0, 1, 0]);
+  const y3 = useTransform(smoothProgress, [0.5, 0.65, 0.8], [50, 0, -50]);
+  const rotateX3 = useTransform(smoothProgress, [0.5, 0.65, 0.8], [45, 0, -45]);
+  const opacity3 = useTransform(smoothProgress, [0.5, 0.65, 0.8], [0, 1, 0]);
 
   // Section 4: Down arrow (80% to 100%)
-  const opacity4 = useTransform(scrollYProgress, [0.8, 0.9, 1], [0, 1, 0]);
+  const opacity4 = useTransform(smoothProgress, [0.8, 0.9, 1], [0, 1, 0]);
 
   // Load images
   useEffect(() => {
     const loadedImages: HTMLImageElement[] = [];
-    let loadedCount = 0;
 
     for (let i = 0; i < FRAME_COUNT; i++) {
       const img = new Image();
       const num = i.toString().padStart(4, '0');
       img.src = `/sequence/frame_${num}.png`;
       img.onload = () => {
-        loadedCount++;
-        if (loadedCount === FRAME_COUNT) {
-          setImages(loadedImages);
-          // Only render initial frame if user is at the top of this section
+        if (i === 0) {
+          // Immediately render initial frame when it's ready
           renderFrame(0, loadedImages); 
         }
       };
       loadedImages.push(img);
     }
+    
+    // Set images array immediately so scroll listeners can use loaded images
+    setImages(loadedImages);
   }, []);
 
   const renderFrame = (frameIndex: number, imgs: HTMLImageElement[]) => {
     if (!canvasRef.current || !imgs[frameIndex]) return;
 
+    const img = imgs[frameIndex];
+    
+    // Only draw the image if it has fully loaded to prevent flickering/blank frames
+    if (!img.complete || img.naturalWidth === 0) return;
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
-    const img = imgs[frameIndex];
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -88,7 +100,7 @@ export default function ScrollyCanvas() {
 
   useEffect(() => {
     return scrollYProgress.onChange((latest) => {
-      if (images.length === FRAME_COUNT) {
+      if (images.length > 0) {
         let frameIndex = Math.floor(latest * FRAME_COUNT);
         if (frameIndex >= FRAME_COUNT) frameIndex = FRAME_COUNT - 1;
         requestAnimationFrame(() => renderFrame(frameIndex, images));
@@ -98,7 +110,7 @@ export default function ScrollyCanvas() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (images.length === FRAME_COUNT) {
+      if (images.length > 0) {
         let frameIndex = Math.floor(scrollYProgress.get() * FRAME_COUNT);
         if (frameIndex >= FRAME_COUNT) frameIndex = FRAME_COUNT - 1;
         renderFrame(frameIndex, images);
@@ -121,20 +133,19 @@ export default function ScrollyCanvas() {
         {/* Overlay Layers inside sticky container */}
         <div className="absolute inset-0 z-10 pointer-events-none">
           {/* Section 1 */}
-          <motion.div
-            style={{ y: y1, opacity: opacity1 }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="absolute inset-0 flex flex-col items-center justify-center"
-          >
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter text-center text-white drop-shadow-2xl">
-              Abhishek K<span className="text-blue-500">.</span>
-            </h1>
-            <p className="text-xl md:text-3xl mt-6 text-white/90 font-light tracking-wide drop-shadow-lg">
-              Creative Developer & UI Designer.
-            </p>
-          </motion.div>
+          <div className="absolute inset-0 flex flex-col items-center justify-center perspective-container">
+            <motion.div
+              style={{ y: y1, opacity: opacity1, rotateX: rotateX1, transformOrigin: "bottom center" }}
+              className="text-center"
+            >
+              <h1 className="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter text-white drop-shadow-2xl">
+                Abhishek K<span className="text-blue-500">.</span>
+              </h1>
+              <p className="text-xl md:text-3xl mt-6 text-white/90 font-light tracking-wide drop-shadow-lg">
+                Creative Developer & UI Designer.
+              </p>
+            </motion.div>
+          </div>
 
           {/* Scroll Down Indicator */}
           <motion.div 
@@ -151,25 +162,25 @@ export default function ScrollyCanvas() {
           </motion.div>
 
           {/* Section 2 */}
-          <motion.div
-            style={{ y: y2, opacity: opacity2 }}
-            className="absolute inset-0 flex flex-col items-start justify-center px-10 md:px-24"
-          >
-            <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold max-w-4xl leading-tight text-white drop-shadow-2xl">
+          <div className="absolute inset-0 flex flex-col items-start justify-center px-10 md:px-24 perspective-container">
+            <motion.h2
+              style={{ y: y2, opacity: opacity2, rotateX: rotateX2, transformOrigin: "bottom center" }}
+              className="text-5xl md:text-7xl lg:text-8xl font-bold max-w-4xl leading-tight text-white drop-shadow-2xl"
+            >
               I build <span className="text-blue-400">high-performance</span>
               <br className="hidden md:block"/> digital experiences.
-            </h2>
-          </motion.div>
+            </motion.h2>
+          </div>
 
           {/* Section 3 */}
-          <motion.div
-            style={{ y: y3, opacity: opacity3 }}
-            className="absolute inset-0 flex flex-col items-end justify-center px-10 md:px-24 text-right"
-          >
-            <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold max-w-4xl leading-tight text-white drop-shadow-2xl">
+          <div className="absolute inset-0 flex flex-col items-end justify-center px-10 md:px-24 text-right perspective-container">
+            <motion.h2
+              style={{ y: y3, opacity: opacity3, rotateX: rotateX3, transformOrigin: "bottom center" }}
+              className="text-5xl md:text-7xl lg:text-8xl font-bold max-w-4xl leading-tight text-white drop-shadow-2xl"
+            >
               Bridging design <br className="hidden md:block"/> and <span className="text-purple-400">engineering.</span>
-            </h2>
-          </motion.div>
+            </motion.h2>
+          </div>
           
           {/* Section 4 */}
           <motion.div
