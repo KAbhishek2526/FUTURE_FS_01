@@ -8,48 +8,73 @@ import MagneticButton from '@/components/MagneticButton';
 const projects = [
   {
     id: 1,
-    title: 'MicroTask – Student Micro-Work Platform',
-    category: 'Featured',
+    title: 'PocketM – Student Micro-Earning Platform',
+    category: 'Product / FinTech',
     desc: (
       <div className="space-y-3 text-white/80">
         <p>
-          MicroTask is a student-focused platform designed to help students earn money by completing small, structured tasks in their free time.
+          PocketM is a campus-centric micro-earning platform tailored for college students to monetize their skills and free time.
         </p>
         <p>
-          The platform integrates <strong className="text-blue-400 font-bold tracking-wide">AI-driven pricing</strong> suggestions to ensure fair compensation, along with an <strong className="text-blue-400 font-bold tracking-wide">escrow system</strong> to secure transactions between clients and students.
+          The app enables students to find and complete <strong className="text-blue-400 font-bold tracking-wide">on-campus micro-gigs</strong>, peer-to-peer services, and local tasks safely.
         </p>
         <p>
-          With college verification mechanisms, MicroTask builds <strong className="text-blue-400 font-bold tracking-wide">verified trust</strong> and authenticity, enabling a reliable ecosystem where students can pick tasks, complete them, and receive payment only after client approval.
-        </p>
-        <p>
-          It also allows external clients, including startups and small businesses, to post tasks and collaborate with students in a structured, transparent, and secure environment.
+          By introducing a peer-trusted verification system, PocketM fosters a <strong className="text-blue-400 font-bold tracking-wide">secure network</strong> where students can earn, collaborate, and build their professional resume.
         </p>
       </div>
     ),
-    shortDesc: 'A student-focused micro-work platform powered by AI pricing, escrow security, and verified trust systems.',
-    tags: ['AI Integration', 'Escrow System', 'Student Platform'],
+    shortDesc: 'A student-focused platform designed to help students earn money by completing structured tasks on campus.',
+    tags: ['React Native', 'On-Campus Gigs', 'FinTech', 'Student Network'],
     image: '/microtask.png',
-    demo: 'https://frontend-taupe-five-53.vercel.app',
-    github: 'https://github.com/KAbhishek2526/hackathon_team',
+    demo: '#',
+    github: 'https://github.com/KAbhishek2526/PocketM',
     featured: true,
   },
   {
     id: 2,
-    title: 'Restaurant Experience',
-    category: 'Web Design',
-    desc: 'An elegant, responsive marketing site for a fine dining restaurant with reservation workflows.',
-    image: '/project-restaurant.png',
+    title: 'AyraBlend – Local Business Storefront',
+    category: 'Web App / E-Commerce',
+    desc: (
+      <div className="space-y-3 text-white/80">
+        <p>
+          AyraBlend is a modern, responsive digital storefront designed specifically for home-based and local small businesses.
+        </p>
+        <p>
+          It provides entrepreneurs with simple but powerful tools to showcase curated products, <strong className="text-blue-400 font-bold tracking-wide">manage local orders</strong>, and connect directly with their community.
+        </p>
+        <p>
+          Featuring clean product catalogs and a highly optimized mobile shopping interface, AyraBlend bridges the gap between local makers and neighborhood customers.
+        </p>
+      </div>
+    ),
+    shortDesc: 'A specialized digital storefront platform helping home and local businesses manage and sell products.',
+    tags: ['Next.js', 'TailwindCSS', 'E-Commerce', 'Local Business'],
+    image: '/project-startup.png',
     demo: '#',
-    github: 'https://github.com/KAbhishek2526',
+    github: 'https://github.com/KAbhishek2526/ayrablend',
   },
   {
     id: 3,
-    title: 'Creative Agency Site',
-    category: 'Motion UI',
-    desc: 'Award-winning portfolio featuring WebGL, custom cursor interactions, and page transitions.',
+    title: 'OurMagic – Valentine\'s Day Special',
+    category: 'Creative UI / Animation',
+    desc: (
+      <div className="space-y-3 text-white/80">
+        <p>
+          OurMagic is a highly interactive, animated digital experience created as a Valentine&apos;s Day tribute.
+        </p>
+        <p>
+          Built with expressive UI animations, immersive scroll effects, and personalized elements, it guides users through a <strong className="text-blue-400 font-bold tracking-wide">beautiful interactive story</strong>.
+        </p>
+        <p>
+          Leveraging high-performance motion design, it creates a memorable, romantic visual experience that showcases creative front-end art.
+        </p>
+      </div>
+    ),
+    shortDesc: 'A highly interactive, animated digital experience built to celebrate Valentine\'s Day.',
+    tags: ['Framer Motion', 'Interactive UI', 'Web Art', 'TailwindCSS'],
     image: '/project-portfolio.png',
     demo: '#',
-    github: 'https://github.com/KAbhishek2526',
+    github: 'https://github.com/KAbhishek2526/OurMagic',
   },
 ];
 
