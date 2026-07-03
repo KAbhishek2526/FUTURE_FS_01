@@ -28,7 +28,7 @@ The website is mobile-friendly and works well on all screen sizes using Bootstra
 
 🌐 Live Site
 
-🔗https://github.com/KAbhishek2526/personal-portfolio.git
+https://future-fs-01-alpha-orpin.vercel.app/
 
 📂 Project Structure
 
