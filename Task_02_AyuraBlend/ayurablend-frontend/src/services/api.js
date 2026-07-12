@@ -1,9 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.PROD 
-    ? 'https://api.ayurmoringa-guntur.in/api' 
-    : 'http://localhost:5001/api',
+  // Fall back to localhost only if the Vercel environment variable isn't present
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5001/api',
   headers: {
     'Content-Type': 'application/json'
   }
