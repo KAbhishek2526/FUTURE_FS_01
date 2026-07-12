@@ -1,0 +1,50 @@
+# =========================================================================
+# AYURABLEND CI/CD PIPELINE - AUTOMATED PRODUCTION BUILD VERIFICATION
+# Triggers on every push or pull request to the 'main' branch
+# =========================================================================
+
+name: Production Build Verification
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  verify-build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Codebase
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js Environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        cache-dependency-path: |
+          ayurablend-frontend/package-lock.json
+          backend/package-lock.json
+
+    # 1. Verify Backend Dependencies
+    - name: Install Backend Dependencies
+      run: |
+        cd backend
+        npm ci
+
+    # 2. Verify Frontend Dependencies & Compile Production Assets
+    - name: Install Frontend Dependencies
+      run: |
+        cd ayurablend-frontend
+        npm ci
+
+    - name: Verify Frontend Production Build
+      run: |
+        cd ayurablend-frontend
+        npm run build
+      env:
+        # Mock values for compile-time check validation
+        VITE_RAZORPAY_KEY_ID: rzp_test_mockKey123
+        NODE_ENV: production
