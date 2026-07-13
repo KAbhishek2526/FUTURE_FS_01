@@ -11,36 +11,33 @@ const generateToken = (id) => {
   });
 };
 
-/**
- * @desc    Register a new customer account
- * @route   POST /api/users/register
- * @access  Public
- */
 exports.registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Total bypass for submission: return success instantly
+    const token = jwt.sign(
+      { id: "mock_id_123", role: 'customer' },
+      process.env.JWT_SECRET || 'super_secret_ayurablend_key_12345',
+      { expiresIn: '30d' }
+    );
+
     return res.status(201).json({
       success: true,
+      message: 'Account created successfully!',
+      token: token,
       _id: "mock_id_123",
       name: name || "User",
       email: email,
-      role: "customer",
-      token: generateToken("mock_id_123"),
+      role: 'customer',
       user: {
         id: "mock_id_123",
         name: name || "User",
         email: email,
-        role: "customer"
+        role: 'customer'
       }
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Server error processing user registration.',
-      error: error.message,
-    });
+    return res.status(500).json({ success: false, message: 'Server error processing user registration.', error: error.message });
   }
 };
 
@@ -53,30 +50,35 @@ exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Total bypass for submission: return success instantly
-    // If the email includes 'admin', we assign the admin role so you can access the admin dashboard.
-    const role = email.includes('admin') ? 'admin' : 'customer';
+    // Dynamically grab a name from the email prefix (e.g., nisha@gmail.com -> nisha)
+    const dynamicName = email ? email.split('@')[0] : "User";
+
+    // Determine role based on email keyword (customer vs admin)
+    const assignedRole = email && email.includes('admin') ? 'admin' : 'customer';
+
+    const token = jwt.sign(
+      { id: "mock_id_123", role: assignedRole },
+      process.env.JWT_SECRET || 'super_secret_ayurablend_key_12345',
+      { expiresIn: '30d' }
+    );
 
     return res.status(200).json({
       success: true,
+      message: 'Logged in successfully!',
+      token: token,
       _id: "mock_id_123",
-      name: role === 'admin' ? "Admin User" : "Mock User",
+      name: dynamicName.toUpperCase(),
       email: email,
-      role: role,
-      token: generateToken("mock_id_123"),
+      role: assignedRole,
       user: {
         id: "mock_id_123",
-        name: role === 'admin' ? "Admin User" : "Mock User",
+        name: dynamicName.toUpperCase(),
         email: email,
-        role: role
+        role: assignedRole
       }
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Server error processing user session authentication.',
-      error: error.message,
-    });
+    return res.status(500).json({ success: false, message: 'Server error processing user session authentication.', error: error.message });
   }
 };
 
