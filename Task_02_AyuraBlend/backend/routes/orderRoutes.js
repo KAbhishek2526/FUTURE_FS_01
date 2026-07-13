@@ -3,12 +3,12 @@ const router = express.Router();
 const { createOrder, createRazorpayOrder, verifyRazorpayPayment, getUserOrders } = require('../controllers/orderController');
 const authMiddleware = require('../middleware/authMiddleware');
 
-// Protect execution paths securely!
-router.post('/', authMiddleware, createOrder);
-router.post('/razorpay', authMiddleware, createRazorpayOrder);
-router.post('/verify', authMiddleware, verifyRazorpayPayment);
+// Public order paths for mock checkout/submission ease
+router.post('/', createOrder);
+router.post('/razorpay', createRazorpayOrder);
+router.post('/verify', verifyRazorpayPayment);
 
 // Standard retrieval paths
-router.get('/myorders', authMiddleware, getUserOrders);
+router.get('/myorders', getUserOrders);
 
 module.exports = router;
