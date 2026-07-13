@@ -4,7 +4,9 @@ const api = axios.create({
   // Force a clean structure so it doesn't glue strings together awkwardly
   baseURL: import.meta.env.VITE_API_URL 
     ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/` 
-    : 'http://localhost:5001/api/',
+    : (import.meta.env.PROD 
+        ? 'https://future-fs-01-w6dl.onrender.com/api/' 
+        : 'http://localhost:5001/api/'),
   headers: {
     'Content-Type': 'application/json'
   }

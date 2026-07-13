@@ -3,6 +3,9 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const { sendWhatsAppTemplate } = require('../services/whatsappService');
 
+// Fallback in-memory storage for order history when MongoDB connection fails/timeouts
+const inMemoryOrders = [];
+
 exports.createOrder = async (req, res) => {
   try {
     const { name, phone, address, items, totalAmount, status } = req.body;
@@ -40,6 +43,8 @@ exports.createOrder = async (req, res) => {
     try {
       savedOrder = await newOrder.save();
       console.log("[Order Service] Order saved to database successfully.");
+      // Also cache in memory for safety
+      inMemoryOrders.push(savedOrder.toObject ? savedOrder.toObject() : savedOrder);
     } catch (dbError) {
       console.warn("⚠️ MongoDB save failed, returning mock saved order:", dbError.message);
       // Fallback mock saved order so frontend transitions to order success page
@@ -52,6 +57,7 @@ exports.createOrder = async (req, res) => {
         deliveryDetails: newOrder.deliveryDetails,
         createdAt: new Date()
       };
+      inMemoryOrders.push(savedOrder);
     }
 
     // Try sending WhatsApp message but don't crash if it fails
@@ -163,9 +169,22 @@ exports.getUserOrders = async (req, res) => {
       console.warn("⚠️ MongoDB query failed in getUserOrders, returning empty array:", dbError.message);
     }
     
-    // If no orders were found in the database, return a default mock order so the customer dashboard is populated
-    if (orders.length === 0 && userId === 'mock_customer_555') {
-      orders = [
+    // Merge in-memory fallback orders
+    const userInMemory = inMemoryOrders.filter(o => String(o.user) === String(userId));
+    let combinedOrders = orders.map(o => o.toObject ? o.toObject() : o);
+
+    userInMemory.forEach(inMemOrder => {
+      if (!combinedOrders.some(o => String(o._id) === String(inMemOrder._id))) {
+        combinedOrders.push(inMemOrder);
+      }
+    });
+
+    // Sort descending by date
+    combinedOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    // If no orders were found at all, return a default mock order so the customer dashboard is populated
+    if (combinedOrders.length === 0 && userId === 'mock_customer_555') {
+      combinedOrders = [
         {
           _id: "order_abc123",
           items: [
@@ -184,7 +203,7 @@ exports.getUserOrders = async (req, res) => {
       ];
     }
     
-    res.status(200).json(orders);
+    res.status(200).json(combinedOrders);
   } catch (error) {
     console.error("Fetch Orders Error:", error);
     res.status(500).json({ message: "Server error fetching user orders", error: error.message });
