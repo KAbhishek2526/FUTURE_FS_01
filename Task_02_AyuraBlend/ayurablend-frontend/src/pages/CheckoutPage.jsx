@@ -59,11 +59,13 @@ export default function CheckoutPage({ cartItems = [], clearCart }) {
     setLoading(true);
 
     try {
-      // 1. Get Razorpay order from backend (mocked on backend, called for logging)
+      // 1. Get Razorpay order from backend (mocked or live depending on credentials)
+      let razorpayData = null;
       try {
-        await api.post("/orders/razorpay", { amount: totalAmount });
+        const res = await api.post("/orders/razorpay", { amount: totalAmount });
+        razorpayData = res.data;
       } catch (err) {
-        console.warn("Backend Razorpay call failed, continuing with direct checkout bypass...");
+        console.warn("Backend Razorpay call failed, running checkout simulation fallback.");
       }
 
       // 2. Prepare Order Object for DB (to be saved directly)
@@ -83,31 +85,105 @@ export default function CheckoutPage({ cartItems = [], clearCart }) {
         status: "Paid"
       };
 
-      // 3. Create the order directly on the backend
-      const createdOrder = await createOrder(orderObject);
-      
-      if (clearCart) clearCart();
-      setLoading(false);
-      navigate("/order-success");
+      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
-      // 4. Trigger client-side WhatsApp workflow deep-link safely after routing
-      try {
-        const customerPhone = formData.phone;
-        const orderId = createdOrder._id || createdOrder.id || 'N/A';
-        const firstItemName = cartItems[0]?.name || 'Ayur Moringa Product';
-        const productName = cartItems.length > 1 ? `${firstItemName} and ${cartItems.length - 1} other(s)` : firstItemName;
+      // 3. Fallback to sandbox simulation if Razorpay call failed, returned sandbox, or key is unconfigured
+      if (!razorpayData || razorpayData.isSandbox || !razorpayKey || razorpayKey === 'YOUR_TEST_KEY_ID') {
+        console.log("Simulating checkout animation/flow...");
         
-        let cleanPhone = customerPhone.replace(/\D/g, '');
-        if (!cleanPhone.startsWith('91') && cleanPhone.length === 10) {
-          cleanPhone = '91' + cleanPhone;
-        }
+        // Save order directly in DB
+        const createdOrder = await createOrder(orderObject);
+        
+        if (clearCart) clearCart();
+        setLoading(false);
+        navigate("/order-success");
 
-        const message = `Hello! Thank you for ordering from Ayura Blend. 🌿\n\nYour order for *${productName}* has been successfully logged (Order ID: #${orderId}). We are preparing it with absolute care. \n\n_Disclaimer: Our products are natural food supplements and are consumed as part of a balanced diet to support everyday wellness._ \n\nThank you for trusting us with your health journey!`;
-        const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://api.whatsapp.com/send/?phone=${cleanPhone}&text=${encodedMessage}`;
-        window.open(whatsappUrl, '_blank');
-      } catch (waError) {
-        console.error("WhatsApp trigger error:", waError);
+        // Trigger client-side WhatsApp workflow deep-link
+        try {
+          const customerPhone = formData.phone;
+          const orderId = createdOrder._id || createdOrder.id || 'N/A';
+          const firstItemName = cartItems[0]?.name || 'Ayur Moringa Product';
+          const productName = cartItems.length > 1 ? `${firstItemName} and ${cartItems.length - 1} other(s)` : firstItemName;
+          
+          let cleanPhone = customerPhone.replace(/\D/g, '');
+          if (!cleanPhone.startsWith('91') && cleanPhone.length === 10) {
+            cleanPhone = '91' + cleanPhone;
+          }
+
+          const message = `Hello! Thank you for ordering from Ayura Blend. 🌿\n\nYour order for *${productName}* has been successfully logged (Order ID: #${orderId}). We are preparing it with absolute care. \n\n_Disclaimer: Our products are natural food supplements and are consumed as part of a balanced diet to support everyday wellness._ \n\nThank you for trusting us with your health journey!`;
+          const encodedMessage = encodeURIComponent(message);
+          const whatsappUrl = `https://api.whatsapp.com/send/?phone=${cleanPhone}&text=${encodedMessage}`;
+          window.open(whatsappUrl, '_blank');
+        } catch (waError) {}
+
+      } else {
+        // Show real Razorpay modal overlay
+        const options = {
+          key: razorpayKey,
+          amount: razorpayData.amount,
+          currency: razorpayData.currency,
+          name: "AyuraBlend",
+          description: "Order Payment",
+          order_id: razorpayData.id,
+
+          handler: async function (response) {
+            try {
+              // Verify signature on backend
+              const verifyRes = await api.post("/orders/verify", {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature
+              });
+
+              if (verifyRes.data.success) {
+                const createdOrder = await createOrder(orderObject);
+                if (clearCart) clearCart();
+                setLoading(false);
+                navigate("/order-success");
+
+                // Trigger client-side WhatsApp workflow deep-link
+                try {
+                  const customerPhone = formData.phone;
+                  const orderId = createdOrder._id || createdOrder.id || 'N/A';
+                  const firstItemName = cartItems[0]?.name || 'Ayur Moringa Product';
+                  const productName = cartItems.length > 1 ? `${firstItemName} and ${cartItems.length - 1} other(s)` : firstItemName;
+                  
+                  let cleanPhone = customerPhone.replace(/\D/g, '');
+                  if (!cleanPhone.startsWith('91') && cleanPhone.length === 10) {
+                    cleanPhone = '91' + cleanPhone;
+                  }
+
+                  const message = `Hello! Thank you for ordering from Ayura Blend. 🌿\n\nYour order for *${productName}* has been successfully logged (Order ID: #${orderId}). We are preparing it with absolute care. \n\n_Disclaimer: Our products are natural food supplements and are consumed as part of a balanced diet to support everyday wellness._ \n\nThank you for trusting us with your health journey!`;
+                  const encodedMessage = encodeURIComponent(message);
+                  const whatsappUrl = `https://api.whatsapp.com/send/?phone=${cleanPhone}&text=${encodedMessage}`;
+                  window.open(whatsappUrl, '_blank');
+                } catch (waError) {}
+              } else {
+                setError('Payment verification failed!');
+                setLoading(false);
+              }
+            } catch (verifyError) {
+              setError('Payment verification check failed.');
+              setLoading(false);
+            }
+          },
+
+          prefill: {
+            name: formData.name,
+            contact: formData.phone,
+          },
+
+          theme: {
+            color: "#3b7d5b",
+          },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (response){
+          setError("Payment initialization failed");
+          setLoading(false);
+        });
+        rzp.open();
       }
 
     } catch (apiError) {

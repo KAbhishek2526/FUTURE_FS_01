@@ -10,7 +10,35 @@ const adminRoutes = require('./routes/adminRoutes');
 const app = express();
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'https://ayurblend-storefront.vercel.app'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow server-to-server or requests without origins
+    if (!origin) return callback(null, true);
+    if (
+      allowedOrigins.indexOf(origin) !== -1 ||
+      origin.startsWith('http://localhost:') ||
+      origin.includes('.vercel.app')
+    ) {
+      return callback(null, true);
+    }
+    const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+    return callback(new Error(msg), false);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Express pre-flight option handler to prevent options route blocking
+app.options('*', cors());
+
 app.use('/api/webhooks', require('./routes/webhookRoutes'));
 app.use(express.json());
 
