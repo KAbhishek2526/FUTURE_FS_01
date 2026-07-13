@@ -150,7 +150,7 @@ export default function CheckoutPage({ cartItems = [], clearCart }) {
           currency: razorpayData.currency,
           name: "AyuraBlend",
           description: "Order Payment",
-          order_id: razorpayData.id,
+          // order_id: razorpayData.id,
 
           handler: async function (response) {
             try {
