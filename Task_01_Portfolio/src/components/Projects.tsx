@@ -32,26 +32,26 @@ const projects = [
   },
   {
     id: 2,
-    title: 'AyraBlend – Local Business Storefront',
-    category: 'Web App / E-Commerce',
+    title: 'AyuraBlend – Full-Stack E-Commerce Ecosystem',
+    category: 'Full-Stack / E-Commerce',
     desc: (
       <div className="space-y-3 text-white/80">
         <p>
-          AyraBlend is a modern, responsive digital storefront designed specifically for home-based and local small businesses.
+          AyuraBlend is a production-ready, scalable e-commerce ecosystem built for a premium herbal wellness startup, bridging the gap between customer storefronts and backend operations.
         </p>
         <p>
-          It provides entrepreneurs with simple but powerful tools to showcase curated products, <strong className="text-blue-400 font-bold tracking-wide">manage local orders</strong>, and connect directly with their community.
+          Features a metrics-driven admin command center, <strong className="text-blue-400 font-bold tracking-wide">secure Razorpay checkout</strong>, and an automated WhatsApp logistics notification engine.
         </p>
         <p>
-          Featuring clean product catalogs and a highly optimized mobile shopping interface, AyraBlend bridges the gap between local makers and neighborhood customers.
+          Engineered with production-level CORS security middleware, a resilient server-side caching layer, and a <strong className="text-blue-400 font-bold tracking-wide">dynamic production-aware URL switcher</strong>.
         </p>
       </div>
     ),
-    shortDesc: 'A specialized digital storefront platform helping home and local businesses manage and sell products.',
-    tags: ['Next.js', 'TailwindCSS', 'E-Commerce', 'Local Business'],
+    shortDesc: 'A scalable, full-stack e-commerce ecosystem for a premium herbal wellness startup featuring secure payments, automated logistics, and a metrics dashboard.',
+    tags: ['React.js', 'Node.js', 'MongoDB', 'Razorpay', 'WhatsApp API'],
     image: '/project-startup.png',
-    demo: '#',
-    github: 'https://github.com/KAbhishek2526/ayrablend',
+    demo: 'https://ayurblend-storefront.vercel.app',
+    github: 'https://github.com/KAbhishek2526/AyuraBlend',
   },
   {
     id: 3,
