@@ -95,7 +95,8 @@ exports.createRazorpayOrder = async (req, res) => {
         id: "sandbox_order_" + Math.floor(100000 + Math.random() * 900000),
         amount: amount * 100,
         currency: "INR",
-        isSandbox: true
+        isSandbox: true,
+        key: null
       });
     }
 
@@ -114,7 +115,8 @@ exports.createRazorpayOrder = async (req, res) => {
     res.status(200).json({
       id: order.id,
       amount: order.amount,
-      currency: order.currency
+      currency: order.currency,
+      key: process.env.RAZORPAY_KEY_ID
     });
   } catch (error) {
     console.error("Razorpay Order Creation Failed:", error);
@@ -123,7 +125,8 @@ exports.createRazorpayOrder = async (req, res) => {
       id: "sandbox_order_" + Math.floor(100000 + Math.random() * 900000),
       amount: amount * 100,
       currency: "INR",
-      isSandbox: true
+      isSandbox: true,
+      key: null
     });
   }
 };

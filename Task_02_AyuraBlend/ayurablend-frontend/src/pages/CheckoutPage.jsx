@@ -105,7 +105,7 @@ export default function CheckoutPage({ cartItems = [], clearCart }) {
         status: "Paid"
       };
 
-      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
+      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID || (razorpayData && razorpayData.key);
 
       // 3. Fallback to sandbox simulation if Razorpay call failed, returned sandbox, or key is unconfigured
       if (!razorpayData || razorpayData.isSandbox || !razorpayKey || razorpayKey === 'YOUR_TEST_KEY_ID') {
