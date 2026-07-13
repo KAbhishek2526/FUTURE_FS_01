@@ -9,117 +9,35 @@ const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
-// ==========================================
-// EMERGENCY PRESENTATION BYPASS (PLACE AT TOP)
-// ==========================================
+// 1. BULLETPROOF CORS LAYER (Must execute before any route definitions)
+const allowedOrigins = [
+  'https://ayurblend-storefront.vercel.app', // Your production frontend
+  'http://localhost:3000',                   // Local development options
+  'http://localhost:5001',
+  'http://localhost:5173',
+  'http://localhost:5174'
+];
 
-const setCorsHeaders = (req, res) => {
-  const origin = req.headers.origin;
-  if (origin && (origin.startsWith('http://localhost:') || origin.includes('.vercel.app'))) {
-    res.header('Access-Control-Allow-Origin', origin);
-  } else {
-    res.header('Access-Control-Allow-Origin', 'https://ayurblend-storefront.vercel.app');
-  }
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-};
-
-// 1. Force Admin Stats to pass through completely bypassing auth middleware
-app.get('/api/admin/stats', (req, res) => {
-  setCorsHeaders(req, res);
-  res.status(200).json({
-    success: true,
-    revenue: 997,
-    aov: 997,
-    totalOrders: 1,
-    totalProducts: 2,
-    lowStockCount: 1,
-    lowStockAlerts: [
-      { _id: "65c36398f6d6b8f36c5df922", name: "Moringa Spice Pack", stock: 12, price: 249, category: "Spices" }
-    ],
-    recentOrders: [
-      {
-        _id: "mock_order_12345",
-        totalAmount: 997,
-        status: "Paid",
-        createdAt: new Date(),
-        deliveryDetails: { name: "Nasreen", phone: "919876543210" },
-        items: [{ name: "Ayur Moringa Pure Blend", quantity: 1, price: 997 }]
-      }
-    ],
-    categorySales: []
-  });
-});
-
-// 2. Force Products Fetch to return clean mock items so storefront/dashboard don't crash
-app.get('/api/products', (req, res) => {
-  setCorsHeaders(req, res);
-  const mockProducts = [
-    {
-      _id: "65c36398f6d6b8f36c5df921",
-      name: "Ayur Moringa Pure Blend",
-      price: 997,
-      description: "Organic premium Moringa leaf powder containing high density antioxidants, essential amino acids, iron, and calcium to support natural energy levels, joint health, and overall daily vitality. Hand-harvested and sun-dried for purity.",
-      category: "Wellness",
-      stock: 45,
-      image: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?q=80&w=600&auto=format&fit=crop",
-      isFeatured: true
-    },
-    {
-      _id: "65c36398f6d6b8f36c5df922",
-      name: "Moringa Spice Pack",
-      price: 249,
-      description: "Custom spice blend of ground Moringa, turmeric, ginger, and black pepper. Perfect for adding to tea, soups, and traditional curries to boost immunity and digestion.",
-      category: "Spices",
-      stock: 12,
-      image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=600&auto=format&fit=crop",
-      isFeatured: false
-    }
-  ];
-  res.status(200).json(mockProducts);
-});
-
-// 3. Force Product Detail Fetch to resolve successfully
-app.get('/api/products/:id', (req, res) => {
-  setCorsHeaders(req, res);
-  const mockProducts = [
-    {
-      _id: "65c36398f6d6b8f36c5df921",
-      name: "Ayur Moringa Pure Blend",
-      price: 997,
-      description: "Organic premium Moringa leaf powder containing high density antioxidants, essential amino acids, iron, and calcium to support natural energy levels, joint health, and overall daily vitality. Hand-harvested and sun-dried for purity.",
-      category: "Wellness",
-      stock: 45,
-      image: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?q=80&w=600&auto=format&fit=crop",
-      isFeatured: true
-    },
-    {
-      _id: "65c36398f6d6b8f36c5df922",
-      name: "Moringa Spice Pack",
-      price: 249,
-      description: "Custom spice blend of ground Moringa, turmeric, ginger, and black pepper. Perfect for adding to tea, soups, and traditional curries to boost immunity and digestion.",
-      category: "Spices",
-      stock: 12,
-      image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=600&auto=format&fit=crop",
-      isFeatured: false
-    }
-  ];
-  const prod = mockProducts.find(p => p._id === req.params.id) || mockProducts[0];
-  res.status(200).json(prod);
-});
-
-// ==========================================
-
-// Middleware
 app.use(cors({
-  origin: true, // Dynamically allows the requesting origin (perfect for dev and production)
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like server-to-server, Postman, or mobile apps) or allowed list
+    if (
+      !origin || 
+      allowedOrigins.includes(origin) || 
+      origin.startsWith('http://localhost:') || 
+      origin.includes('.vercel.app')
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS Policy Defeated: Origin not allowed.'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// SAFE PRE-FLIGHT HANDLER (Replaces the broken app.options line)
+// 2. SAFE PRE-FLIGHT HANDLER
 app.use((req, res, next) => {
   if (req.method === 'OPTIONS') {
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');

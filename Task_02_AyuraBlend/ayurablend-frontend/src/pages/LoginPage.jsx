@@ -104,6 +104,35 @@ export default function LoginPage() {
           </button>
         </form>
 
+        <div className="mt-6 border-t pt-4 border-gray-200">
+          <p className="text-xs text-gray-500 text-center mb-3 font-medium">
+            ⚡ Quick Demonstration Sandbox Access
+          </p>
+          <div className="flex gap-3 justify-center">
+            <button
+              type="button"
+              onClick={() => {
+                setEmail("customer@ayurablend.com");
+                setPassword("demo1234");
+              }}
+              className="px-3 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 rounded-md border border-emerald-200 hover:bg-emerald-100 transition cursor-pointer"
+            >
+              Guest Customer Login
+            </button>
+            
+            <button
+              type="button"
+              onClick={() => {
+                setEmail("admin@ayurablend.com");
+                setPassword("admin1234");
+              }}
+              className="px-3 py-1.5 text-xs font-semibold bg-amber-50 text-amber-700 rounded-md border border-amber-200 hover:bg-amber-100 transition cursor-pointer"
+            >
+              Guest Admin Hub
+            </button>
+          </div>
+        </div>
+
         <p className="text-center text-text-light mt-6 text-sm">
           New to AyuraBlend? <Link to="/register" className="text-primary font-medium hover:underline">Create an account</Link>
         </p>
