@@ -49,7 +49,7 @@ const projects = [
     ),
     shortDesc: 'A scalable, full-stack e-commerce ecosystem for a premium herbal wellness startup featuring secure payments, automated logistics, and a metrics dashboard.',
     tags: ['React.js', 'Node.js', 'MongoDB', 'Razorpay', 'WhatsApp API'],
-    image: '/project-startup.png',
+    image: '/ayurablend.png',
     demo: 'https://ayurblend-storefront.vercel.app',
     github: 'https://github.com/KAbhishek2526/AyuraBlend',
   },
@@ -60,20 +60,20 @@ const projects = [
     desc: (
       <div className="space-y-3 text-white/80">
         <p>
-          OurMagic is a highly interactive, animated digital experience created as a Valentine&apos;s Day tribute.
+          OurMagic is a highly personalized, password-protected digital experience designed as an interactive tribute journey.
         </p>
         <p>
-          Built with expressive UI animations, immersive scroll effects, and personalized elements, it guides users through a <strong className="text-blue-400 font-bold tracking-wide">beautiful interactive story</strong>.
+          Features a dynamic twinkling starfield background, <strong className="text-blue-400 font-bold tracking-wide">custom interactive authorization</strong>, and reactive verification feedback.
         </p>
         <p>
-          Leveraging high-performance motion design, it creates a memorable, romantic visual experience that showcases creative front-end art.
+          Built using complex Framer Motion transitions, responsive flex layouts, and optimized assets to create a seamless romantic narrative.
         </p>
       </div>
     ),
-    shortDesc: 'A highly interactive, animated digital experience built to celebrate Valentine\'s Day.',
+    shortDesc: 'A highly personalized, password-protected digital experience with custom interactive animations and a romantic narrative.',
     tags: ['Framer Motion', 'Interactive UI', 'Web Art', 'TailwindCSS'],
-    image: '/project-portfolio.png',
-    demo: '#',
+    image: '/ourmagic.png',
+    demo: 'https://our-magic.vercel.app/',
     github: 'https://github.com/KAbhishek2526/OurMagic',
   },
 ];
