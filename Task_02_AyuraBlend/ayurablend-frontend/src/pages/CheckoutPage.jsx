@@ -86,7 +86,11 @@ export default function CheckoutPage({ cartItems = [], clearCart }) {
       // 3. Create the order directly on the backend
       const createdOrder = await createOrder(orderObject);
       
-      // 4. Trigger client-side WhatsApp workflow deep-link
+      if (clearCart) clearCart();
+      setLoading(false);
+      navigate("/order-success");
+
+      // 4. Trigger client-side WhatsApp workflow deep-link safely after routing
       try {
         const customerPhone = formData.phone;
         const orderId = createdOrder._id || createdOrder.id || 'N/A';
@@ -105,10 +109,6 @@ export default function CheckoutPage({ cartItems = [], clearCart }) {
       } catch (waError) {
         console.error("WhatsApp trigger error:", waError);
       }
-
-      if (clearCart) clearCart();
-      setLoading(false);
-      navigate("/order-success");
 
     } catch (apiError) {
       console.error("Payment init error:", apiError);

@@ -16,7 +16,7 @@ exports.registerUser = async (req, res) => {
     const { name, email, password } = req.body;
 
     const token = jwt.sign(
-      { id: "mock_id_123", role: 'customer' },
+      { id: "mock_customer_555", role: 'customer' },
       process.env.JWT_SECRET || 'super_secret_ayurablend_key_12345',
       { expiresIn: '30d' }
     );
@@ -25,12 +25,12 @@ exports.registerUser = async (req, res) => {
       success: true,
       message: 'Account created successfully!',
       token: token,
-      _id: "mock_id_123",
+      _id: "mock_customer_555",
       name: name || "User",
       email: email,
       role: 'customer',
       user: {
-        id: "mock_id_123",
+        id: "mock_customer_555",
         name: name || "User",
         email: email,
         role: 'customer'
@@ -55,9 +55,10 @@ exports.loginUser = async (req, res) => {
 
     // Determine role based on email keyword (customer vs admin)
     const assignedRole = email && email.includes('admin') ? 'admin' : 'customer';
+    const uniqueMockId = assignedRole === 'admin' ? 'mock_admin_999' : 'mock_customer_555';
 
     const token = jwt.sign(
-      { id: "mock_id_123", role: assignedRole },
+      { id: uniqueMockId, role: assignedRole },
       process.env.JWT_SECRET || 'super_secret_ayurablend_key_12345',
       { expiresIn: '30d' }
     );
@@ -66,12 +67,12 @@ exports.loginUser = async (req, res) => {
       success: true,
       message: 'Logged in successfully!',
       token: token,
-      _id: "mock_id_123",
+      _id: uniqueMockId,
       name: dynamicName.toUpperCase(),
       email: email,
       role: assignedRole,
       user: {
-        id: "mock_id_123",
+        id: uniqueMockId,
         name: dynamicName.toUpperCase(),
         email: email,
         role: assignedRole

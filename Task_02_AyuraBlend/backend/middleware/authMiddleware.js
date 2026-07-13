@@ -14,11 +14,11 @@ const protect = async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'super_secret_ayurablend_key_12345');
 
       // Fetch the user from the database and pass it forward (excluding the password hash)
-      if (decoded.id === 'mock_id_123') {
+      if (decoded.id === 'mock_customer_555' || decoded.id === 'mock_admin_999') {
         req.user = {
-          _id: 'mock_id_123',
-          name: 'Mock User',
-          email: 'mock@example.com',
+          _id: decoded.id,
+          name: decoded.id === 'mock_admin_999' ? 'Mock Admin' : 'Mock Customer',
+          email: decoded.id === 'mock_admin_999' ? 'admin@mock.com' : 'customer@mock.com',
           role: decoded.role || 'customer'
         };
       } else {
@@ -57,11 +57,11 @@ const protect = async (req, res, next) => {
     token = fallbackHeader.replace('Bearer ', '');
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'super_secret_ayurablend_key_12345');
-      if (decoded.id === 'mock_id_123') {
+      if (decoded.id === 'mock_customer_555' || decoded.id === 'mock_admin_999') {
         req.user = {
-          _id: 'mock_id_123',
-          name: 'Mock User',
-          email: 'mock@example.com',
+          _id: decoded.id,
+          name: decoded.id === 'mock_admin_999' ? 'Mock Admin' : 'Mock Customer',
+          email: decoded.id === 'mock_admin_999' ? 'admin@mock.com' : 'customer@mock.com',
           role: decoded.role || 'customer'
         };
       } else {

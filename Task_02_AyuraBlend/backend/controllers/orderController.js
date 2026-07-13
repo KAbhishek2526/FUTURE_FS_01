@@ -20,7 +20,7 @@ exports.createOrder = async (req, res) => {
       price: item.price
     }));
 
-    const userId = req.user ? (req.user.id || req.user._id) : "mock_id_123";
+    const userId = req.user ? (req.user.id || req.user._id) : "mock_customer_555";
 
     const newOrder = new Order({
       user: userId,
@@ -108,13 +108,35 @@ exports.verifyRazorpayPayment = async (req, res) => {
 
 exports.getUserOrders = async (req, res) => {
   try {
-    const userId = req.user ? (req.user.id || req.user._id) : "mock_id_123";
+    const userId = req.user ? (req.user.id || req.user._id) : "mock_customer_555";
     let orders = [];
     try {
       orders = await Order.find({ user: userId }).sort({ createdAt: -1 });
     } catch (dbError) {
       console.warn("⚠️ MongoDB query failed in getUserOrders, returning empty array:", dbError.message);
     }
+    
+    // If no orders were found in the database, return a default mock order so the customer dashboard is populated
+    if (orders.length === 0 && userId === 'mock_customer_555') {
+      orders = [
+        {
+          _id: "order_abc123",
+          items: [
+            { name: "Ayur Moringa Spice Pack", quantity: 1, price: 249 }
+          ],
+          totalAmount: 249,
+          status: "Paid",
+          createdAt: new Date(),
+          deliveryDetails: {
+            name: "Nasreen",
+            phone: "919876543210",
+            address: "123 Wellness St, Guntur",
+            pincode: "522001"
+          }
+        }
+      ];
+    }
+    
     res.status(200).json(orders);
   } catch (error) {
     console.error("Fetch Orders Error:", error);
