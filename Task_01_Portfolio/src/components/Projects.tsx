@@ -74,7 +74,7 @@ const projects = [
     tags: ['Framer Motion', 'Interactive UI', 'Web Art', 'TailwindCSS'],
     image: '/ourmagic.png',
     demo: 'https://our-magic.vercel.app/',
-    github: 'https://github.com/KAbhishek2526/OurMagic',
+    github: 'https://github.com/KAbhishek2526/OurMagic/blob/main/README.md',
   },
 ];
 

@@ -60,7 +60,7 @@ export default function Contact() {
               <Github size={22} />
             </a>
             <a 
-              href="https://www.linkedin.com/in/abhishek-k-891683326/" 
+              href="https://www.linkedin.com/in/abhishek-kokkilagadda-891683326/" 
               target="_blank" rel="noopener noreferrer"
               className="w-14 h-14 rounded-full glass flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 hover:scale-110 active:scale-95 transition-all duration-300 shadow-[0_0_10px_rgba(37,99,235,0)] hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:text-blue-400 hover:border hover:border-blue-500/30"
             >

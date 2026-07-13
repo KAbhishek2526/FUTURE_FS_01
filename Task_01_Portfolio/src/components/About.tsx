@@ -77,7 +77,7 @@ export default function About() {
               Email Me
             </a>
             <a 
-              href="https://www.linkedin.com/in/abhishek-k-891683326/"
+              href="https://www.linkedin.com/in/abhishek-kokkilagadda-891683326/"
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3 rounded-full bg-white/10 text-white font-medium tracking-wide border border-white/20 hover:bg-white/20 hover:scale-105 transition-all duration-300 hover:border-blue-400/50 hover:shadow-[0_0_15px_rgba(37,99,235,0.2)]"
