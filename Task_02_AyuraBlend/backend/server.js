@@ -13,8 +13,21 @@ const app = express();
 // EMERGENCY PRESENTATION BYPASS (PLACE AT TOP)
 // ==========================================
 
+const setCorsHeaders = (req, res) => {
+  const origin = req.headers.origin;
+  if (origin && (origin.startsWith('http://localhost:') || origin.includes('.vercel.app'))) {
+    res.header('Access-Control-Allow-Origin', origin);
+  } else {
+    res.header('Access-Control-Allow-Origin', 'https://ayurblend-storefront.vercel.app');
+  }
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+};
+
 // 1. Force Admin Stats to pass through completely bypassing auth middleware
 app.get('/api/admin/stats', (req, res) => {
+  setCorsHeaders(req, res);
   res.status(200).json({
     success: true,
     revenue: 997,
@@ -41,6 +54,7 @@ app.get('/api/admin/stats', (req, res) => {
 
 // 2. Force Products Fetch to return clean mock items so storefront/dashboard don't crash
 app.get('/api/products', (req, res) => {
+  setCorsHeaders(req, res);
   const mockProducts = [
     {
       _id: "65c36398f6d6b8f36c5df921",
@@ -68,6 +82,7 @@ app.get('/api/products', (req, res) => {
 
 // 3. Force Product Detail Fetch to resolve successfully
 app.get('/api/products/:id', (req, res) => {
+  setCorsHeaders(req, res);
   const mockProducts = [
     {
       _id: "65c36398f6d6b8f36c5df921",
