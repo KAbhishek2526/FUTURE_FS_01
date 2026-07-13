@@ -4,6 +4,22 @@ import api from '../services/api';
 import { createOrder } from '../services/orderService';
 import { AuthContext } from '../context/AuthContext';
 
+// Helper function to load the external Razorpay script dynamically
+const loadRazorpayScript = () => {
+  return new Promise((resolve) => {
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
+
 export default function CheckoutPage({ cartItems = [], clearCart }) {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useContext(AuthContext);
@@ -28,6 +44,10 @@ export default function CheckoutPage({ cartItems = [], clearCart }) {
       navigate('/cart');
     }
   }, [cartItems, navigate]);
+
+  useEffect(() => {
+    loadRazorpayScript();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -118,6 +138,12 @@ export default function CheckoutPage({ cartItems = [], clearCart }) {
 
       } else {
         // Show real Razorpay modal overlay
+        if (!window.Razorpay) {
+          setError("Razorpay SDK failed to load. Please check your network connection.");
+          setLoading(false);
+          return;
+        }
+
         const options = {
           key: razorpayKey,
           amount: razorpayData.amount,
