@@ -12,33 +12,14 @@ const chatRoutes = require('./routes/chatRoutes');
 
 const app = express();
 
-// 1. BULLETPROOF CORS LAYER (Must execute before any route definitions)
-const allowedOrigins = [
-  'https://ayurblend-storefront.vercel.app', // Your production frontend
-  'http://localhost:3000',                   // Local development options
-  'http://localhost:5001',
-  'http://localhost:5173',
-  'http://localhost:5174'
-];
-
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like server-to-server, Postman, or mobile apps) or allowed list
-    if (
-      !origin || 
-      allowedOrigins.includes(origin) || 
-      origin.startsWith('http://localhost:') || 
-      origin.includes('.vercel.app')
-    ) {
-      callback(null, true);
-    } else {
-      callback(new Error('CORS Policy Defeated: Origin not allowed.'));
-    }
-  },
+// 1. BULLETPROOF CORS LAYER
+const corsOptions = {
+  origin: 'https://ayurablend-frontend.onrender.com', // Your actual production frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+};
+
+app.use(cors(corsOptions));
 
 // 2. SAFE PRE-FLIGHT HANDLER
 app.use((req, res, next) => {
