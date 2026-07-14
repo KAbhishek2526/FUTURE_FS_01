@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+
+/* ─── Design Tokens — Professional B2B SaaS Light Theme ─── */
+:root {
+  /* Surfaces */
+  --c-bg:          #F9FAFB;   /* Gray-50  — page background    */
+  --c-surface:     #FFFFFF;   /* White    — card/panel surface  */
+  --c-surface-2:   #F3F4F6;   /* Gray-100 — subtle inner panels */
+
+  /* Borders */
+  --c-border:      #E5E7EB;   /* Gray-200 */
+  --c-border-focus:#2563EB;   /* Blue-600 — focus ring         */
+
+  /* Typography */
+  --c-text:        #111827;   /* Gray-900 — headings           */
+  --c-text-2:      #374151;   /* Gray-700 — body               */
+  --c-muted:       #6B7280;   /* Gray-500 — labels, captions   */
+  --c-placeholder: #9CA3AF;   /* Gray-400 */
+
+  /* Brand / CTA */
+  --c-primary:     #2563EB;   /* Blue-600 */
+  --c-primary-h:   #1D4ED8;   /* Blue-700 — hover              */
+  --c-primary-bg:  #EFF6FF;   /* Blue-50  — light tint         */
+
+  /* Status palette — muted, professional */
+  --s-new-bg:      #EFF6FF; --s-new-text:      #1D4ED8;
+  --s-contacted-bg:#FFFBEB; --s-contacted-text:#92400E;
+  --s-qualified-bg:#F0FDF4; --s-qualified-text:#166534;
+  --s-proposal-bg: #F5F3FF; --s-proposal-text: #5B21B6;
+  --s-won-bg:      #ECFDF5; --s-won-text:      #065F46;
+  --s-lost-bg:     #FEF2F2; --s-lost-text:     #991B1B;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow:    0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+}
+
+/* ─── Base Reset ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { font-size: 16px; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: var(--c-bg);
+  color: var(--c-text-2);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-border) transparent;
+}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 3px; }
+
+/* ─── Utility Classes ────────────────────────────────────── */
+
+/* Standard card */
+.crm-card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Form input */
+.crm-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  line-height: 1.5;
+}
+.crm-input::placeholder { color: var(--c-placeholder); }
+.crm-input:focus {
+  border-color: var(--c-border-focus);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+}
+
+/* Primary button */
+.crm-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  color: #ffffff;
+  background: var(--c-primary);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.crm-btn-primary:hover:not(:disabled) { background: var(--c-primary-h); }
+.crm-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Secondary button */
+.crm-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--c-text-2);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.crm-btn-secondary:hover:not(:disabled) { background: var(--c-surface-2); }
+
+/* Icon button */
+.crm-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  color: var(--c-muted);
+  background: transparent;
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.crm-btn-icon:hover { background: var(--c-surface-2); color: var(--c-text-2); }
+
+/* Status badge */
+.crm-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+/* Section label */
+.crm-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--c-muted);
+  margin-bottom: 0.375rem;
+  letter-spacing: 0.01em;
+}

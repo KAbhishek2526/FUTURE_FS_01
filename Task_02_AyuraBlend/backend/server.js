@@ -6,6 +6,9 @@ require('dotenv').config();
 const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const leadRoutes = require('./routes/leadRoutes');
+const chatRoutes = require('./routes/chatRoutes');
+
 
 const app = express();
 
@@ -58,6 +61,9 @@ app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/leads', leadRoutes);   // CRM Lead Management
+app.use('/api/chat',  chatRoutes);   // AI CRM Agent
+
 
 const PORT = process.env.PORT || 5001;
 
